@@ -1,6 +1,6 @@
 #[tokio::test]
 async fn health_check_works() {
-    spawn_app().await.expect("Failed to spawn app.");
+    spawn_app();
     let client = reqwest::Client::new();
 
     let response = client
@@ -13,8 +13,7 @@ async fn health_check_works() {
     assert_eq!(response.content_length(), Some(0));
 }
 
-async fn spawn_app() -> std::io::Result<()> {
-    // Calling zero2prod::run().await here would wait for run to return (which never happens) and
-    // thus hang forever and never run the test code.
-    todo!()
+fn spawn_app() {
+    let server = zero2prod::run().expect("Failed to bind address.");
+    let _ = tokio::spawn(server);
 }
