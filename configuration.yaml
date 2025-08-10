@@ -1,0 +1,2 @@
+application_port: 8000
+database_path: "./sqlite.db"
