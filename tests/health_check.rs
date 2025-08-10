@@ -5,7 +5,7 @@ fn spawn_app() -> String {
     // 0 is special port which will tell the OS to scan for available port
     let listener = TcpListener::bind("localhost:0").expect("Failed to bind to random port");
     let port = listener.local_addr().unwrap().port();
-    let server = zero2prod::startup::run(listener).expect("Failed to bind address.");
+    let server = zero2prod::startup::run(listener).expect("Failed to bind address");
     let _ = tokio::spawn(server);
     format!("http://localhost:{}", port)
 }
@@ -19,7 +19,7 @@ async fn health_check_works() {
         .get(&format!("{}/health_check", &address))
         .send()
         .await
-        .expect("Failed to execute request.");
+        .expect("Failed to execute request");
 
     assert!(response.status().is_success());
     assert_eq!(response.content_length(), Some(0));
@@ -37,7 +37,7 @@ async fn post_subscriptions_returns_200_for_valid_form_data() {
         .body(body)
         .send()
         .await
-        .expect("Failed to execute request.");
+        .expect("Failed to execute request");
 
     assert_eq!(response.status().as_u16(), 200);
 }
@@ -59,7 +59,7 @@ async fn post_subscriptions_returns_400_when_data_is_missing() {
             .body(invalid_body)
             .send()
             .await
-            .expect("Failed to execute request.");
+            .expect("Failed to execute request");
 
         assert_eq!(
             response.status().as_u16(),
