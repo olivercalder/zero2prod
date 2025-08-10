@@ -1,3 +1,4 @@
+use sqlx::{Connection, SqliteConnection};
 use std::net::TcpListener;
 use zero2prod::configuration::get_configuration;
 
@@ -30,7 +31,7 @@ async fn health_check_works() {
 async fn post_subscriptions_returns_200_for_valid_form_data() {
     let app_address = spawn_app();
     let configuration = get_configuration().expect("Failed to read configuration");
-    configuration.database.assert_db_connection().await;
+    let connection_string = configuration.database.connection_string();
     let client = reqwest::Client::new();
 
     let body = "name=le%20guin&email=ursula_le_guin%gmail.com";
@@ -43,6 +44,10 @@ async fn post_subscriptions_returns_200_for_valid_form_data() {
         .expect("Failed to execute request");
 
     assert_eq!(response.status().as_u16(), 200);
+
+    let connection = SqliteConnection::connect(&connection_string)
+        .await
+        .expect("Failed to connect to sqlite");
 }
 
 #[tokio::test]
